@@ -1,6 +1,6 @@
 use std::path::PathBuf;
 
-use gatekeeper::{ALPN, Client, Server};
+use gatekeeper::{ALPN, Arbiter, Client, Server};
 use iroh::{Endpoint, SecretKey, Watcher, protocol::Router};
 use uuid::Uuid;
 
@@ -44,13 +44,12 @@ impl ClientServer {
             .await
             .unwrap();
 
+        let arbiter = Arbiter::new(infra.db_path.clone(), remote_setup)
+            .await
+            .unwrap();
+
         let server = Router::builder(server_endpoint)
-            .accept(
-                ALPN,
-                Server::new(infra.db_path.clone(), remote_setup)
-                    .await
-                    .unwrap(),
-            )
+            .accept(ALPN, Server::new(arbiter))
             .spawn();
 
         let server_addr = server.endpoint().node_addr().initialized().await;
