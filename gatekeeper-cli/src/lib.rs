@@ -4,18 +4,18 @@ use std::str::FromStr;
 
 pub use cli::Cli;
 use gatekeeper::{Client, Cmd};
-use iroh::{Endpoint, NodeId};
+use iroh::{Endpoint, NodeId, SecretKey};
 
-pub async fn exec(cli: Cli) -> anyhow::Result<()> {
+pub async fn exec(sk: SecretKey, server: NodeId, cmd: Cmd) -> anyhow::Result<()> {
     let endpoint = Endpoint::builder()
         .discovery_n0()
-        .secret_key(cli.sk)
+        .secret_key(sk)
         .bind()
         .await?;
 
-    let client = Client::new(endpoint, cli.server);
+    let client = Client::new(endpoint, server);
 
-    match cli.cmd {
+    match cmd {
         Cmd::Roles => {
             let roles = client.roles().await?;
             println!("{}", roles.join("\n"));

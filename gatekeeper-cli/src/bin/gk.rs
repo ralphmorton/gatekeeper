@@ -5,7 +5,7 @@ use gatekeeper_cli::{Cli, exec};
 async fn main() {
     let cli = Cli::parse();
 
-    if let Err(e) = exec(cli).await {
+    if let Err(e) = exec(cli.sk, cli.server, cli.cmd).await {
         eprintln!("{}", e);
         std::process::exit(1);
     }
