@@ -25,10 +25,13 @@ pub enum Cmd {
     /// Create a new node
     CreateNode {
         /// Node name (unique)
+        #[arg(long)]
         name: String,
         /// Node public key (unique)
+        #[arg(long)]
         node: String,
         /// Grant superadmin access to node?
+        #[arg(long, default_value_t = false)]
         superadmin: bool,
     },
     /// Delete a node
